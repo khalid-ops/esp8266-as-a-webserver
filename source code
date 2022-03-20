@@ -1,0 +1,43 @@
+#include<ESP8266WiFi.h>
+
+WiFiClient client;
+WiFiServer server(80);
+
+#define led D5
+void setup() {
+  // put your setup code here, to run once:
+ WiFi.begin("wifi ssid", "passwrd");
+ Serial.begin(9600);
+ while(WiFi.status() != WL_CONNECTED){
+
+  Serial.print("..");
+  delay(200);
+  }
+
+ Serial.println("wifi Connected\n");
+ Serial.println(WiFi.localIP());
+ server.begin();
+ pinMode(led, OUTPUT);
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  client = server.available();
+  String request;
+  if(client == 1){
+    request = client.readStringUntil('\n');
+    Serial.println(request);
+    request.trim();
+  }
+ if(request == "GET /ledon HTTP/1.1"){
+  digitalWrite(led, HIGH);
+ }
+ if(request == "GET /ledoff HTTP/1.1")
+  {
+  digitalWrite(led, LOW);
+ }
+
+
+
+}
